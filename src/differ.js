@@ -86,7 +86,7 @@ function diffScreen(name) {
  * Diff all screens that have an "after" screenshot.
  * @returns {Array} results array
  */
-function diffAll() {
+function diffAll(names) {
   ensureDirs();
 
   // Collect screen names from the "after" directory
@@ -102,7 +102,7 @@ function diffAll() {
 
   const results = [];
 
-  for (const file of afterFiles) {
+  for (const file of afterFiles.filter(f => !names || names.includes(f.slice(0, -4)))) {
     const name = file.replace(".png", "");
     const result = diffScreen(name);
 

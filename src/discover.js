@@ -74,7 +74,8 @@ async function discover() {
     const page = await context.newPage();
     try {
       console.log(`  🔗  Crawling: ${currentPath} (Depth ${depth})`);
-      await page.goto(url, { waitUntil: "networkidle", timeout: 10_000 });
+      const response = await page.goto(url, { waitUntil: "networkidle", timeout: 10_000 });
+      if (!response || !response.ok()) throw new Error(`HTTP ${response?.status()}`);
 
       // Record this route
       routes.push({ name: nameFromPath(currentPath), path: currentPath });

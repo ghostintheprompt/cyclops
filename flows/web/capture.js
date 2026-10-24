@@ -57,6 +57,12 @@ async function captureAll(outputKey = outputArg) {
     return [];
   }
 
+  if (!Array.isArray(ROUTES) || !ROUTES.length || ROUTES.some(route =>
+    !route || typeof route.name !== "string" || !/^[a-zA-Z0-9_-]+$/.test(route.name) ||
+    typeof route.path !== "string" || !route.path.startsWith("/") || route.path.startsWith("//")) ||
+    new Set(ROUTES.map(route => route.name)).size !== ROUTES.length) {
+    throw new Error("ROUTES must contain unique safe names and same-origin paths");
+  }
   const outputDir = DIRS[outputKey] || DIRS.after;
   ensureDirs();
 
@@ -82,7 +88,8 @@ async function captureAll(outputKey = outputArg) {
     const page = await context.newPage();
     try {
       console.log(`  📷  ${label(route.name)} → ${url}`);
-      await page.goto(url, { waitUntil: "networkidle", timeout: 15_000 });
+      const response = await page.goto(url, { waitUntil: "networkidle", timeout: 15_000 });
+      if (!response || !response.ok()) throw new Error(`HTTP capture failed: ${response?.status()}`);
 
       // Optional: wait for a custom ready signal if configured
       if (process.env.WAIT_FOR_READY_SIGNAL === "true") {

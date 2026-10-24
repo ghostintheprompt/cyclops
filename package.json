@@ -1,7 +1,7 @@
 {
   "name": "cyclops",
   "version": "1.0.0",
-  "description": "Automated Visual Regression & AI-Polish Framework. Captures screenshots, diffs baselines, opens GitHub PRs — and runs a file-watcher so an AI assistant can iterate on your UI in real time.",
+  "description": "Automated Visual Regression & AI-Polish Framework. Captures screenshots, diffs baselines, opens GitHub PRs \u2014 and runs a file-watcher so an AI assistant can iterate on your UI in real time.",
   "main": "src/orchestrator.js",
   "type": "commonjs",
   "repository": {
@@ -9,20 +9,27 @@
     "url": "https://github.com/ghostintheprompt/cyclops"
   },
   "scripts": {
-    "start":        "node index.js",
-    "qa:run":       "node src/orchestrator.js",
-    "qa:import":    "node src/onboard.js",
-    "qa:discover":  "node src/discover.js",
-    "qa:frame":     "node src/framer.js",
-    "qa:release":   "node src/release.js",
-    "qa:capture":   "node flows/web/capture.js --output after",
-    "qa:diff":      "node src/differ.js",
-    "qa:watch":     "node src/watcher.js",
-    "qa:baseline":  "node -e \"const{DIRS}=require('./src/utils');const fs=require('fs'),path=require('path');fs.mkdirSync(DIRS.before,{recursive:true});fs.readdirSync(DIRS.after).filter(f=>f.endsWith('.png')).forEach(f=>{fs.copyFileSync(path.join(DIRS.after,f),path.join(DIRS.before,f));console.log('  ✅  Baseline set:',f);});console.log('\\n  Baseline updated from screenshots/after/\\n');\"",
-    "qa:clean":     "rm -rf screenshots/after/* screenshots/diffs/* screenshots/current_state/*",
-    "qa:clean:all": "rm -rf screenshots/after/* screenshots/diffs/* screenshots/current_state/* screenshots/before/*"
+    "start": "node index.js",
+    "qa:run": "node src/orchestrator.js",
+    "qa:import": "node src/onboard.js",
+    "qa:discover": "node src/discover.js",
+    "qa:frame": "node src/framer.js",
+    "qa:release": "node src/release.js",
+    "qa:capture": "node flows/web/capture.js --output after",
+    "qa:diff": "node src/differ.js",
+    "qa:watch": "node src/watcher.js",
+    "qa:baseline": "node -e \"const{DIRS}=require('./src/utils');const fs=require('fs'),path=require('path');fs.mkdirSync(DIRS.before,{recursive:true});fs.readdirSync(DIRS.after).filter(f=>f.endsWith('.png')).forEach(f=>{fs.copyFileSync(path.join(DIRS.after,f),path.join(DIRS.before,f));console.log('  \u2705  Baseline set:',f);});console.log('\\n  Baseline updated from screenshots/after/\\n');\"",
+    "qa:clean": "rm -rf screenshots/after/* screenshots/diffs/* screenshots/current_state/*",
+    "qa:clean:all": "rm -rf screenshots/after/* screenshots/diffs/* screenshots/current_state/* screenshots/before/*",
+    "test": "node --test test/audit.test.js"
   },
-  "keywords": ["visual-regression", "playwright", "pixelmatch", "qa", "gitops"],
+  "keywords": [
+    "visual-regression",
+    "playwright",
+    "pixelmatch",
+    "qa",
+    "gitops"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
