@@ -5,7 +5,7 @@
  */
 
 const shell = require("shelljs");
-const pkg = require("./package.json");
+const pkg = require("../package.json");
 
 console.log(`\n🚀  Releasing Cyclops v${pkg.version}...\n`);
 
@@ -20,19 +20,21 @@ console.log(`🏷️   Tagging ${tag}...`);
 const tagResult = shell.exec(`git tag -a ${tag} -m "Release ${tag}"`);
 
 if (tagResult.code !== 0) {
-  console.log("⚠️   Tag might already exist or failed.");
+  console.error("Tag creation failed; release stopped.");
+  process.exit(1);
 }
 
 // 2. Push tags
 console.log("📡  Pushing tags...");
-shell.exec("git push origin --tags");
+if (shell.exec(`git push origin ${tag}`).code !== 0) process.exit(1);
 
 // 3. GitHub Release
 if (shell.which("gh")) {
   console.log("📦  Creating GitHub Release...");
-  shell.exec(`gh release create ${tag} --title "Cyclops ${tag}" --notes "MDRN Corp open-source release."`);
+  if (shell.exec(`gh release create ${tag} --title "Cyclops ${tag}" --notes "MDRN Corp open-source release."`).code !== 0) process.exit(1);
 } else {
-  console.log("⏭️   Skipping GitHub Release (gh CLI not found).");
+  console.error("gh CLI missing; GitHub release not created.");
+  process.exit(1);
 }
 
 console.log("\n✅  Release complete!\n");

@@ -28,9 +28,7 @@ const watchArg = (() => {
   return idx !== -1 ? process.argv[idx + 1] : null;
 })();
 
-const WATCH_DIR = watchArg
-  || process.env.WATCH_DIR
-  || path.resolve(__dirname, "../../");  // parent dir as safe default
+const WATCH_DIR = path.resolve(path.resolve(__dirname, ".."), watchArg || process.env.WATCH_DIR || "../");  // parent dir as safe default
 
 const DEBOUNCE_MS  = parseInt(process.env.DEBOUNCE_MS  || "2000", 10);
 const HOT_RELOAD_S = parseInt(process.env.HOT_RELOAD_S || "2",    10);
@@ -70,6 +68,7 @@ async function triggerCapture(changedFile) {
     const results = await captureAll("current");
     const ok  = results.filter((r) => r.ok);
     const bad = results.filter((r) => !r.ok);
+    if (!ok.length) throw new Error("No screenshots captured; UI review was not updated");
 
     console.log(
       `\n  📸  UI updated! New screenshot${ok.length !== 1 ? "s" : ""} saved for AI review.`

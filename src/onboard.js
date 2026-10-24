@@ -8,7 +8,7 @@
  */
 
 require("dotenv").config();
-const shell = require("shelljs");
+const { execFileSync } = require("node:child_process");
 const path = require("path");
 const fs = require("fs");
 const readline = require("readline/promises");
@@ -35,6 +35,9 @@ async function start() {
     .pop()
     .replace(".git", "") || "unknown-project";
 
+  if (!/^[a-zA-Z0-9_.-]+$/.test(repoName) || repoName === "." || repoName === "..") {
+    throw new Error("Repository name must be a safe directory name");
+  }
   const targetPath = path.join(DIRS.projects, repoName);
 
   ensureDirs();
@@ -46,16 +49,11 @@ async function start() {
       console.log("    Aborting.");
       process.exit(0);
     }
-    shell.rm("-rf", targetPath);
+    fs.rmSync(targetPath, { recursive: true, force: true });
   }
 
   console.log(`\n📡  Cloning ${repoName}...`);
-  const cloneResult = shell.exec(`git clone --depth 1 ${repoUrl} "${targetPath}"`, { silent: true });
-
-  if (cloneResult.code !== 0) {
-    console.error(`\n✖  Failed to clone repository: ${cloneResult.stderr}`);
-    process.exit(1);
-  }
+  execFileSync("git", ["clone", "--depth", "1", "--", repoUrl, targetPath], { stdio: "inherit" });
 
   console.log(`✅  Cloned into projects/${repoName}`);
 
